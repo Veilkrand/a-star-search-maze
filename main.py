@@ -1,30 +1,25 @@
-# feets 👣
-# palms: 🌴
-# ninja 🥷
-# panda: 🐼
-# hut: 🛖
-# mountain: 🏔
 from math import floor, sqrt
 
+# NOT IN USE ANYMORE
+# from PIL import Image, ImageDraw, ImageFont
+# class BgColors():
+#     BLACK = '\033[30m'
+#     RED = '\033[31m'
+#     GREEN = '\033[32m'
+#     YELLOW = '\033[33m'
+#     BLUE = '\033[34m'
+#     MAGENTA = '\033[35m'
+#     CYAN = '\033[36m'
+#     WHITE = '\033[37m'
+#     UNDERLINE = '\033[4m'
+#     RESET = '\033[0m'
 
 def color_text(r, g, b, text):
     return "\033[38;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text)
     # return "\033[48;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text)
 
-class BgColors():
-    BLACK = '\033[30m'
-    RED = '\033[31m'
-    GREEN = '\033[32m'
-    YELLOW = '\033[33m'
-    BLUE = '\033[34m'
-    MAGENTA = '\033[35m'
-    CYAN = '\033[36m'
-    WHITE = '\033[37m'
-    UNDERLINE = '\033[4m'
-    RESET = '\033[0m'
-
-
 class Maze:
+
     # map icons
     CHAR_WALL = '🌴'
     CHAR_EMPTY = '👣'
@@ -169,13 +164,14 @@ class Maze:
             print()
 
 
-    def print_maze(self, path=None, step=0, to_visit_nodes=None, visited_nodes=None):
+    def print_maze(self, path=None, step=0, to_visit_nodes=None, visited_nodes=None, save_image=False):
         """
 
         :param path: optional path to visualized
         :param step: viz up to step in the path starting 1. 0 will show all the path
         :param to_visit_nodes: optionally visualize nodes to visit
         :param visited_nodes: optionally visualize nodes already visited
+        :param save_file: Save output to an image
         :return:
         """
 
@@ -248,14 +244,21 @@ class Maze:
 
         print(output_str)
 
+        # Tried to save image with emojis but are not colored and font dependent
+        # if save_image:
+        #     img = Image.new('RGB', (100, 30), color=(73, 109, 137))
+        #     fnt = ImageFont.truetype('/Library/Fonts/Symbola.ttf', 15)
+        #     d = ImageDraw.Draw(img)
+        #     d.text((0, 0), output_str, font=fnt )
+        #     # d.text((0, 0), output_str, fill=(255, 255, 0))
+        #     img.save('images/output.png')
+
 class PositionNode:
 
     def __init__(self, parent: "PositionNode", position: tuple):
-
         self.cost = 0
-
-        self.parent = parent
-        self.position = position
+        self.parent: "PositionNode" = parent
+        self.position: tuple = position
 
     def __eq__(self, other: "PositionNode"):
         return self.position == other.position
@@ -384,22 +387,27 @@ class MazeSolver:
 
 if __name__ == '__main__':
 
-    file_name = 'maze.txt'
-    file_name = 'maze_small.txt'
-    file_name = 'maze_breakpoint.txt'
+    fn1 = 'maps/maze.txt'
+    fn2 = 'maps/maze_small.txt'
+    fn3 = 'maps/maze_breakpoint.txt'
+    fn4 = 'maps/maze_breakpoint2.txt'
 
-    maze = Maze(file_name)
+    # create the maze object
+    maze = Maze(fn1)
 
+    # print initial maze
     maze.print_maze()
+    # print cost map
     maze.print_heuristics()
 
-    # --
-    # solver
+    # maze solver
     solver = MazeSolver(maze)
     path = solver.a_star_search()
 
-    # print solution
+    # print solution for all steps
     maze.print_maze(path, 0)
+
+    # print solution step by step
     # for step in range(1, len(path)+1):
     #     print()
     #     print('Step:', step)
